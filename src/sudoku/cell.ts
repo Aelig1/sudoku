@@ -7,8 +7,20 @@ class Cell extends EventTarget {
   #digit: string;
   get digit(): string { return this.#digit; }
   set digit(digit: string) {
-    this.#digit = digit;
-    this.#element.innerHTML = digit || "";
+    if (!this.#isClue) {
+      this.#setDigit(digit); // Setting digit not allowed if the cell is a clue
+    }
+  }
+
+  #isClue: boolean;
+  get isClue(): boolean { return this.#isClue; }
+  set clue(digit: string) {
+    const hasValue = !!digit;
+    if (!hasValue && !this.#isClue) {
+      return; // If the clue is emptied and it was not a clue before, do nothing (preserves user entered digit)
+    }
+    this.#setDigit(digit);
+    this.#isClue = hasValue;
   }
 
   #select: Event = new Event("select");
@@ -33,6 +45,16 @@ class Cell extends EventTarget {
 
   deselect() {
     this.#element.classList.remove("sudoku-selected");
+  }
+
+  reset() {
+    this.#setDigit(undefined);
+    this.#isClue = false;
+  }
+
+  #setDigit(digit: string) {
+    this.#digit = digit;
+    this.#element.innerHTML = digit || "";
   }
 }
 

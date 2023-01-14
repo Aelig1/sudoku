@@ -5,6 +5,7 @@ class Sudoku {
   #element: Element;
   get element(): Element { return this.#element; }
 
+  #cells: Cell[] = [];
   #selectedCell: Cell;
 
   constructor();
@@ -32,7 +33,11 @@ class Sudoku {
 
       for (let x = 0; x < 9; x++) {
         const cell = new Cell();
+        this.#cells.push(cell);
         row.appendChild(cell.element);
+
+        // DEBUG
+        if (Math.random() > .7) cell.clue = Math.ceil(Math.random() * 9).toString();
 
         cell.addEventListener("select", (event) => this.#onCellSelect(event.target as Cell));
       }
@@ -44,6 +49,13 @@ class Sudoku {
       this.#selectedCell.deselect();
     }
     this.#selectedCell = cell;
+  }
+
+  reset() {
+    for (const cell of this.#cells) {
+      cell.reset();
+      cell.deselect();
+    }
   }
 }
 
