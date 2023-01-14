@@ -1,3 +1,3 @@
 import Sudoku from "./sudoku";
 
-document.body.innerText = new Sudoku().test;
+new Sudoku(document.getElementById("sudoku"));
