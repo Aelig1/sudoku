@@ -1,9 +1,11 @@
 import Cell from "./cell";
 import "./sudoku.css";
 
-const Sudoku = class {
+class Sudoku {
   #element: Element;
   get element(): Element { return this.#element; }
+
+  #selectedCell: Cell;
 
   constructor();
   constructor(element: Element);
@@ -31,9 +33,18 @@ const Sudoku = class {
       for (let x = 0; x < 9; x++) {
         const cell = new Cell();
         row.appendChild(cell.element);
+
+        cell.addEventListener("select", (event) => this.#onCellSelect(event.target as Cell));
       }
     }
   }
-};
+
+  #onCellSelect(cell: Cell) {
+    if (this.#selectedCell && this.#selectedCell != cell) {
+      this.#selectedCell.deselect();
+    }
+    this.#selectedCell = cell;
+  }
+}
 
 export default Sudoku;
