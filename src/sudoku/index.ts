@@ -1,6 +1,10 @@
 import Cell from "./cell";
 import "./sudoku.scss";
 
+export interface SudokuOptions {
+  allowedDigits?: string | string[];
+}
+
 class Sudoku {
   #element: Element;
   get element(): Element { return this.#element; }
@@ -8,14 +12,33 @@ class Sudoku {
   #cells: Cell[] = [];
   #selectedCell: Cell;
 
+  #options: SudokuOptions = {
+    allowedDigits: "123456789",
+  };
+
   constructor();
   constructor(element: Element);
+  constructor(element: Element, options: SudokuOptions);
   constructor(
     element?: Element,
+    options?: SudokuOptions,
   ) {
     this.#element = element || document.createElement("div");
     this.#element.classList.add("sudoku");
+
+    // Override options
+    this.#options = { ...this.#options, ...options };
+
     this.#buildTable();
+
+    document.addEventListener("keydown", (event) => this.#onKeyDown(event));
+  }
+
+  reset() {
+    for (const cell of this.#cells) {
+      cell.reset();
+      cell.deselect();
+    }
   }
 
   #buildTable() {
@@ -51,11 +74,27 @@ class Sudoku {
     this.#selectedCell = cell;
   }
 
-  reset() {
-    for (const cell of this.#cells) {
-      cell.reset();
-      cell.deselect();
+  #onKeyDown(event: KeyboardEvent) {
+    if (!this.#selectedCell) return; // No cell was selected
+    event.preventDefault();
+
+    let digit = event.key;
+    if (!this.isAllowedDigit(digit)) {
+      digit = undefined; // The given digit is not allowed
     }
+
+    this.#selectedCell.digit = digit;
+  }
+
+  isAllowedDigit(digit: string) {
+    let allowedDigits = this.#options?.allowedDigits;
+    if (!allowedDigits) return true; // Anything goes
+
+    if (typeof allowedDigits === "string") {
+      allowedDigits = allowedDigits.split(""); // Convert allowed digits to an array
+    }
+
+    return allowedDigits.includes(digit);
   }
 }
 

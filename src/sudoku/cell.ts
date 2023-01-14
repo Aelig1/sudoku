@@ -19,8 +19,10 @@ class Cell extends EventTarget {
     if (!hasValue && !this.#isClue) {
       return; // If the clue is emptied and it was not a clue before, do nothing (preserves user entered digit)
     }
+
     this.#setDigit(digit);
     this.#isClue = hasValue;
+    this.#element.classList.toggle("sudoku-clue", this.#isClue);
   }
 
   #select: Event = new Event("select");
@@ -49,7 +51,7 @@ class Cell extends EventTarget {
 
   reset() {
     this.#setDigit(undefined);
-    this.#isClue = false;
+    this.clue = undefined;
   }
 
   #setDigit(digit: string) {
