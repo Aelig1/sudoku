@@ -1,0 +1,17 @@
+.sudoku {
+  background: #fffffe;
+  border: 3px solid #111112;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.sudoku .sudoku-table {
+  border-collapse: collapse;
+}
+
+.sudoku .sudoku-table .sudoku-cell {
+  width: 3rem;
+  height: 3rem;
+  border: 1px solid #555556;
+  margin: 0;
+}

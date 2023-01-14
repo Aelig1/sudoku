@@ -1,3 +1,5 @@
+import "./sudoku.css";
+
 const Cell = class {
   #element: Element;
   get element(): Element { return this.#element; }
@@ -15,6 +17,7 @@ const Cell = class {
     element?: Element,
   ) {
     this.#element = element || document.createElement("td");
+    this.#element.classList.add("sudoku-cell");
   }
 };
 
@@ -28,11 +31,13 @@ const Sudoku = class {
     element?: Element,
   ) {
     this.#element = element || document.createElement("div");
+    this.#element.classList.add("sudoku");
     this.#buildTable();
   }
 
   #buildTable() {
     const table = document.createElement("table");
+    table.classList.add("sudoku-table");
     this.#element.appendChild(table);
 
     const tableBody = document.createElement("tbody");
