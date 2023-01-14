@@ -1,6 +1,8 @@
 const Sudoku = class {
+  test: string;
+
   constructor() {
-    this.test = 'it\s working';
+    this.test = "it's working";
   }
 }
 

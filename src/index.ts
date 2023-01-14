@@ -1,3 +1,3 @@
-import Sudoku from './sudoku/sudoku.js';
+import Sudoku from "./sudoku";
 
 document.body.innerText = new Sudoku().test;
