@@ -1,5 +1,5 @@
 import Cell from "./cell";
-import "./sudoku.css";
+import "./sudoku.scss";
 
 class Sudoku {
   #element: Element;

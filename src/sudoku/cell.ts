@@ -1,4 +1,4 @@
-import "./sudoku.css";
+import "./sudoku.scss";
 
 class Cell extends EventTarget {
   #element: Element;

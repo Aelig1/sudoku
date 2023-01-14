@@ -8,8 +8,8 @@ module.exports = (env, argv) => {
       exclude: /node_modules/,
     },
     {
-      test: /\.css$/i,
-      use: ["style-loader", "css-loader"],
+      test: /\.(c|s[ac])ss$/i,
+      use: ["style-loader", "css-loader", "sass-loader"],
     },
   ];
 
