@@ -76,14 +76,16 @@ class Sudoku {
 
   #onKeyDown(event: KeyboardEvent) {
     if (!this.#selectedCell) return; // No cell was selected
-    event.preventDefault();
 
-    let digit = event.key;
-    if (!this.isAllowedDigit(digit)) {
-      digit = undefined; // The given digit is not allowed
+    const digit = event.key;
+    if (this.isAllowedDigit(digit)) {
+      event.preventDefault();
+      this.#selectedCell.digit = digit;
     }
-
-    this.#selectedCell.digit = digit;
+    else if (this.#isClearKey(digit)) {
+      event.preventDefault();
+      this.#selectedCell.digit = undefined; // Clear the cell
+    }
   }
 
   isAllowedDigit(digit: string) {
@@ -95,6 +97,10 @@ class Sudoku {
     }
 
     return allowedDigits.includes(digit);
+  }
+
+  #isClearKey(key: string) {
+    return ["0", "Backspace", "Delete"].includes(key);
   }
 }
 
