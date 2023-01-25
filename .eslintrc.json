@@ -54,9 +54,7 @@
         ],
         "array-element-newline": [
             "error",
-            {
-                "multiline": true
-            }
+            "consistent"
         ],
         "array-bracket-newline": [
             "error",

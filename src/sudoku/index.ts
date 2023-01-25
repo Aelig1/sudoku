@@ -1,9 +1,8 @@
 import Cell from "./cell";
+import DuplicateEvent from "./duplicateEvent";
+import Group from "./group";
+import SudokuOptions, { defaultOptions } from "./sudokuOptions";
 import "./sudoku.scss";
-
-export interface SudokuOptions {
-  allowedDigits?: string | string[];
-}
 
 class Sudoku {
   #element: Element;
@@ -12,9 +11,9 @@ class Sudoku {
   #cells: Cell[] = [];
   #selectedCell: Cell;
 
-  #options: SudokuOptions = {
-    allowedDigits: "123456789",
-  };
+  #groups: Group[] = [];
+
+  #options: SudokuOptions = defaultOptions;
 
   constructor();
   constructor(element: Element);
@@ -49,14 +48,21 @@ class Sudoku {
     const tableBody = document.createElement("tbody");
     table.appendChild(tableBody);
 
+    this.#buildCells(tableBody);
+    this.#buildGroups();
+  }
+
+  #buildCells(parentElement: HTMLElement) {
+    const cells: Cell[] = [];
+
     // Create a 9x9 grid
     for (let y = 0; y < 9; y++) {
       const row = document.createElement("tr");
-      tableBody.appendChild(row);
+      parentElement.appendChild(row);
 
       for (let x = 0; x < 9; x++) {
         const cell = new Cell();
-        this.#cells.push(cell);
+        cells.push(cell);
         row.appendChild(cell.element);
 
         // DEBUG
@@ -64,6 +70,27 @@ class Sudoku {
 
         cell.addEventListener("select", (event) => this.#onCellSelect(event.target as Cell));
       }
+    }
+
+    this.#cells = cells;
+  }
+
+  #buildGroups() {
+    const groups: Group[] = [];
+
+    for (const groupIndices of this.#options.groups) {
+      const groupCells = groupIndices.map(i => this.#cells[i]);
+      const group = new Group(groupCells);
+      group.addEventListener("duplicate", (event) => this.#onDuplicate(event as DuplicateEvent));
+      groups.push(group);
+    }
+
+    this.#groups = groups;
+  }
+
+  #onDuplicate(event: DuplicateEvent) {
+    for (const cell of event.duplicates) {
+      cell.element.classList.add("sudoku-duplicate");
     }
   }
 

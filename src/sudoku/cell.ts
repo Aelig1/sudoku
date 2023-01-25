@@ -25,8 +25,6 @@ class Cell extends EventTarget {
     this.#element.classList.toggle("sudoku-clue", this.#isClue);
   }
 
-  #select: Event = new Event("select");
-
   constructor();
   constructor(element: Element);
   constructor(
@@ -42,7 +40,7 @@ class Cell extends EventTarget {
 
   select() {
     this.#element.classList.add("sudoku-selected");
-    this.dispatchEvent(this.#select);
+    this.dispatchEvent(new Event("select"));
   }
 
   deselect() {
@@ -57,6 +55,7 @@ class Cell extends EventTarget {
   #setDigit(digit: string) {
     this.#digit = digit;
     this.#element.innerHTML = digit || "";
+    this.dispatchEvent(new Event("digitChange"));
   }
 }
 
