@@ -1,7 +1,7 @@
 import Cell from "./cell";
 import DuplicateEvent from "./duplicateEvent";
 import Group from "./group";
-import SudokuOptions, { defaultOptions } from "./sudokuOptions";
+import SudokuRules, { defaultRules } from "./sudokuRules";
 import "./sudoku.scss";
 
 class Sudoku {
@@ -13,14 +13,14 @@ class Sudoku {
 
   #groups: Group[] = [];
 
-  #options: SudokuOptions = defaultOptions;
+  #options: SudokuRules = defaultRules;
 
   constructor();
   constructor(element: Element);
-  constructor(element: Element, options: SudokuOptions);
+  constructor(element: Element, options: SudokuRules);
   constructor(
     element?: Element,
-    options?: SudokuOptions,
+    options?: SudokuRules,
   ) {
     this.#element = element || document.createElement("div");
     this.#element.classList.add("sudoku");

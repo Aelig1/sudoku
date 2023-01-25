@@ -1,9 +1,9 @@
-interface SudokuOptions {
+interface SudokuRules {
   allowedDigits?: string | string[];
   groups?: number[][];
 }
 
-export const defaultOptions = {
+export const defaultRules: SudokuRules = {
   allowedDigits: "123456789",
   groups: [
     // Rows
@@ -39,4 +39,4 @@ export const defaultOptions = {
   ],
 };
 
-export default SudokuOptions;
+export default SudokuRules;
