@@ -1,6 +1,6 @@
 import Cell from "./cell";
 
-class DuplicateEvent extends Event {
+class CellEvent extends Event {
   cells: Cell[];
 
   constructor(name: string);
@@ -14,4 +14,4 @@ class DuplicateEvent extends Event {
   }
 }
 
-export default DuplicateEvent;
+export default CellEvent;
