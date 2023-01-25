@@ -26,6 +26,7 @@ module.exports = (env, argv) => {
     resolve: {
       extensions: [".tsx", ".ts", ".js"],
     },
+    target: "web",
     output: {
       filename: "index.js",
     },
