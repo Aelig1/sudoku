@@ -13,8 +13,8 @@ class Sudoku {
 
   #groups: Group[] = [];
 
-  #rules: SudokuRules = defaultRules;
-  get rules(): SudokuRules {return this.#rules; }
+  #rules: SudokuRules;
+  get rules(): SudokuRules { return this.#rules; }
 
   constructor();
   constructor(element: Element);
@@ -27,18 +27,9 @@ class Sudoku {
     this.#element.classList.add("sudoku");
 
     // Override rules
-    this.#rules = { ...this.#rules, ...rules };
+    this.#rules = { ...defaultRules, ...rules };
 
     this.#buildTable();
-
-    document.addEventListener("keydown", (event) => this.#onKeyDown(event));
-  }
-
-  reset() {
-    for (const cell of this.#cells) {
-      cell.reset();
-      cell.deselect();
-    }
   }
 
   #buildTable() {
@@ -66,9 +57,6 @@ class Sudoku {
         cells.push(cell);
         row.appendChild(cell.element);
 
-        // DEBUG
-        if (Math.random() > .7) cell.clue = Math.ceil(Math.random() * 9).toString();
-
         cell.addEventListener("select", (event) => this.#onCellSelect(event.target as Cell));
       }
     }
@@ -90,9 +78,12 @@ class Sudoku {
   }
 
   #onError(event: CellEvent) {
+    // Highlight error cells
     for (const cell of event.cells) {
-      cell.element.classList.add("sudoku-error");
+      cell.error = true;
     }
+    // Handle error according to rules
+    this.#rules.onError(this);
   }
 
   #onCellSelect(cell: Cell) {
@@ -102,6 +93,7 @@ class Sudoku {
     this.#selectedCell = cell;
   }
 
+  #onKeyDownListener = (event: KeyboardEvent) => this.#onKeyDown(event);
   #onKeyDown(event: KeyboardEvent) {
     if (!this.#selectedCell) return; // No cell was selected
 
@@ -129,6 +121,28 @@ class Sudoku {
 
   #isClearKey(key: string) {
     return ["0", "Backspace", "Delete"].includes(key);
+  }
+
+  reset() {
+    for (const cell of this.#cells) {
+      cell.reset();
+      cell.deselect();
+    }
+  }
+
+  generate() {
+    // DEBUG
+    for (const cell of this.#cells) {
+      if (Math.random() > .7) cell.clue = Math.ceil(Math.random() * 9).toString();
+    }
+  }
+
+  startGame() {
+    document.addEventListener("keydown", this.#onKeyDownListener);
+  }
+
+  endGame() {
+    document.removeEventListener("keydown", this.#onKeyDownListener);
   }
 }
 

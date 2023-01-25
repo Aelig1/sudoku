@@ -29,6 +29,14 @@ class Cell extends EventTarget {
     this.#element.classList.toggle("sudoku-clue", this.#isClue);
   }
 
+  #error: boolean;
+  get error(): boolean { return this.#error; }
+  set error(value: boolean) {
+    this.#error = value;
+    if (value) this.#element.classList.add("sudoku-error");
+    else this.#element.classList.remove("sudoku-error");
+  }
+
   constructor(sudoku: Sudoku);
   constructor(sudoku: Sudoku, element: Element);
   constructor(
@@ -57,6 +65,7 @@ class Cell extends EventTarget {
   reset() {
     this.#setDigit(undefined);
     this.clue = undefined;
+    this.error = false;
   }
 
   #setDigit(digit: string) {

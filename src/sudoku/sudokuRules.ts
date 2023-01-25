@@ -1,10 +1,12 @@
 import Cell from "./cell";
 import Group from "./group";
+import Sudoku from ".";
 
 interface SudokuRules {
   allowedDigits?: string | string[];
   groups?: number[][];
-  getErrorCells?: (group: Group) => Cell[]
+  getErrorCells?: (group: Group) => Cell[];
+  onError?: (sudoku: Sudoku) => void;
 }
 
 export const defaultRules: SudokuRules = {
@@ -62,6 +64,9 @@ export const defaultRules: SudokuRules = {
       .from(digitCells.values())
       .filter(cells => cells.length > 1)
       .flat();
+  },
+  onError: (sudoku: Sudoku) => {
+    sudoku.endGame();
   },
 };
 
