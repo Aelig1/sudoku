@@ -1,6 +1,10 @@
+import Cell from "./cell";
+import Group from "./group";
+
 interface SudokuRules {
   allowedDigits?: string | string[];
   groups?: number[][];
+  getErrorCells?: (group: Group) => Cell[]
 }
 
 export const defaultRules: SudokuRules = {
@@ -37,6 +41,28 @@ export const defaultRules: SudokuRules = {
     [57, 58, 59, 66, 67, 68, 75, 76, 77],
     [60, 61, 62, 69, 70, 71, 78, 79, 80],
   ],
+  getErrorCells: (group: Group) => {
+    // Get duplicate digits in a group
+    // Group cells by digit
+    const digitCells = new Map<string, Cell[]>();
+
+    for (const cell of group.cells) {
+      const digit = cell.digit;
+      if (!digit) continue; // Empty cell
+
+      let found = digitCells.get(digit);
+      if (!found) {
+        found = []; // Digit not found yet, add to digitCells
+        digitCells.set(digit, found);
+      }
+      found.push(cell); // Add cell to digit's array
+    }
+
+    return Array
+      .from(digitCells.values())
+      .filter(cells => cells.length > 1)
+      .flat();
+  },
 };
 
 export default SudokuRules;

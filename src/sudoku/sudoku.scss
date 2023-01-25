@@ -23,7 +23,7 @@
         border: 2px solid #506dac;
         background-color: rgba(158, 189, 255, 0.05);
 
-        &.sudoku-duplicate {
+        &.sudoku-error {
           border-color: #f42;
         }
       }
@@ -32,12 +32,12 @@
         color: #272712;
         font-weight: 600;
 
-        &.sudoku-duplicate {
+        &.sudoku-error {
           color: #702001;
         }
       }
 
-      &.sudoku-duplicate {
+      &.sudoku-error {
         color: #90103f;
         background-color: rgba(255, 20, 10, .1);
       }

@@ -1,16 +1,16 @@
 import Cell from "./cell";
 
 class DuplicateEvent extends Event {
-  duplicates: Cell[];
+  cells: Cell[];
 
   constructor(name: string);
-  constructor(name: string, duplicates: Cell[]);
+  constructor(name: string, cells: Cell[]);
   constructor(
     name: string,
-    duplicates?: Cell[],
+    cells?: Cell[],
   ) {
     super(name);
-    this.duplicates = duplicates;
+    this.cells = cells;
   }
 }
 

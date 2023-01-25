@@ -1,8 +1,12 @@
+import Sudoku from ".";
 import "./sudoku.scss";
 
 class Cell extends EventTarget {
   #element: Element;
   get element(): Element { return this.#element; }
+
+  #sudoku: Sudoku;
+  get sudoku(): Sudoku { return this.#sudoku; }
 
   #digit: string;
   get digit(): string { return this.#digit; }
@@ -25,12 +29,15 @@ class Cell extends EventTarget {
     this.#element.classList.toggle("sudoku-clue", this.#isClue);
   }
 
-  constructor();
-  constructor(element: Element);
+  constructor(sudoku: Sudoku);
+  constructor(sudoku: Sudoku, element: Element);
   constructor(
+    sudoku: Sudoku,
     element?: Element,
   ) {
     super();
+
+    this.#sudoku = sudoku;
 
     this.#element = element || document.createElement("td");
     this.#element.classList.add("sudoku-cell");

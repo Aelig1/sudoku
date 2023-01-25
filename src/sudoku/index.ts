@@ -1,5 +1,5 @@
 import Cell from "./cell";
-import DuplicateEvent from "./duplicateEvent";
+import CellEvent from "./cellEvent";
 import Group from "./group";
 import SudokuRules, { defaultRules } from "./sudokuRules";
 import "./sudoku.scss";
@@ -13,20 +13,21 @@ class Sudoku {
 
   #groups: Group[] = [];
 
-  #options: SudokuRules = defaultRules;
+  #rules: SudokuRules = defaultRules;
+  get rules(): SudokuRules {return this.#rules; }
 
   constructor();
   constructor(element: Element);
-  constructor(element: Element, options: SudokuRules);
+  constructor(element: Element, rules: SudokuRules);
   constructor(
     element?: Element,
-    options?: SudokuRules,
+    rules?: SudokuRules,
   ) {
     this.#element = element || document.createElement("div");
     this.#element.classList.add("sudoku");
 
-    // Override options
-    this.#options = { ...this.#options, ...options };
+    // Override rules
+    this.#rules = { ...this.#rules, ...rules };
 
     this.#buildTable();
 
@@ -61,7 +62,7 @@ class Sudoku {
       parentElement.appendChild(row);
 
       for (let x = 0; x < 9; x++) {
-        const cell = new Cell();
+        const cell = new Cell(this);
         cells.push(cell);
         row.appendChild(cell.element);
 
@@ -78,19 +79,19 @@ class Sudoku {
   #buildGroups() {
     const groups: Group[] = [];
 
-    for (const groupIndices of this.#options.groups) {
+    for (const groupIndices of this.#rules.groups) {
       const groupCells = groupIndices.map(i => this.#cells[i]);
-      const group = new Group(groupCells);
-      group.addEventListener("duplicate", (event) => this.#onDuplicate(event as DuplicateEvent));
+      const group = new Group(this, groupCells);
+      group.addEventListener("error", (event) => this.#onError(event as CellEvent));
       groups.push(group);
     }
 
     this.#groups = groups;
   }
 
-  #onDuplicate(event: DuplicateEvent) {
-    for (const cell of event.duplicates) {
-      cell.element.classList.add("sudoku-duplicate");
+  #onError(event: CellEvent) {
+    for (const cell of event.cells) {
+      cell.element.classList.add("sudoku-error");
     }
   }
 
@@ -116,7 +117,7 @@ class Sudoku {
   }
 
   isAllowedDigit(digit: string) {
-    let allowedDigits = this.#options?.allowedDigits;
+    let allowedDigits = this.#rules?.allowedDigits;
     if (!allowedDigits) return true; // Anything goes
 
     if (typeof allowedDigits === "string") {
