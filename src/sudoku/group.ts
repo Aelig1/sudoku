@@ -1,5 +1,4 @@
 import Cell from "./cell";
-import CellEvent from "./cellEvent";
 import Sudoku from ".";
 
 class Group extends EventTarget {
@@ -20,17 +19,9 @@ class Group extends EventTarget {
     this.#sudoku = sudoku;
     this.#cells = cells;
     for (const cell of cells) {
-      cell.addEventListener("digitChange", () => this.#onDigitChange(cell));
+      cell.addToGroup(this);
     }
   }
-
-  #onDigitChange = (cell: Cell) => {
-    const errorCells = this.#sudoku.rules.getErrorCells(this);
-    if (!errorCells?.length) return;
-
-    const event = new CellEvent("error", errorCells);
-    this.dispatchEvent(event);
-  };
 }
 
 export default Group;

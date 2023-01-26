@@ -2,6 +2,7 @@ import Cell from "./cell";
 import CellEvent from "./cellEvent";
 import Group from "./group";
 import SudokuRules, { defaultRules } from "./sudokuRules";
+import { shuffleArray } from "./utils";
 import "./sudoku.scss";
 
 class Sudoku {
@@ -58,6 +59,7 @@ class Sudoku {
         row.appendChild(cell.element);
 
         cell.addEventListener("select", (event) => this.#onCellSelect(event.target as Cell));
+        cell.addEventListener("error", (event) => this.#onError(event as CellEvent));
       }
     }
 
@@ -70,7 +72,6 @@ class Sudoku {
     for (const groupIndices of this.#rules.groups) {
       const groupCells = groupIndices.map(i => this.#cells[i]);
       const group = new Group(this, groupCells);
-      group.addEventListener("error", (event) => this.#onError(event as CellEvent));
       groups.push(group);
     }
 
@@ -108,15 +109,16 @@ class Sudoku {
     }
   }
 
-  isAllowedDigit(digit: string) {
+  getAllowedDigits(): string[] {
     let allowedDigits = this.#rules?.allowedDigits;
-    if (!allowedDigits) return true; // Anything goes
-
-    if (typeof allowedDigits === "string") {
+    if (allowedDigits instanceof String) {
       allowedDigits = allowedDigits.split(""); // Convert allowed digits to an array
     }
+    return allowedDigits as string[];
+  }
 
-    return allowedDigits.includes(digit);
+  isAllowedDigit(digit: string) {
+    return this.getAllowedDigits().includes(digit);
   }
 
   #isClearKey(key: string) {
@@ -130,10 +132,23 @@ class Sudoku {
     }
   }
 
-  generate() {
-    // DEBUG
-    for (const cell of this.#cells) {
-      if (Math.random() > .7) cell.clue = Math.ceil(Math.random() * 9).toString();
+  generate(numberOfClues: number) {
+    const allowedDigits = this.getAllowedDigits();
+    const shuffledCells = shuffleArray(this.#cells);
+
+    const clueCells: Cell[] = [];
+    while (clueCells.length < numberOfClues && shuffledCells.length) {
+      const cell = shuffledCells.pop();
+
+      const shuffledDigits = shuffleArray(allowedDigits);
+      while (shuffledDigits.length) {
+        const clue = shuffledDigits.pop();
+        if (!this.#rules.checkErrors(cell, clue)?.length) {
+          cell.clue = clue;
+          clueCells.push(cell);
+          break;
+        }
+      }
     }
   }
 

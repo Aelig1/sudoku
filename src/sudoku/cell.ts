@@ -1,3 +1,5 @@
+import CellEvent from "./cellEvent";
+import Group from "./group";
 import Sudoku from ".";
 import "./sudoku.scss";
 
@@ -8,12 +10,16 @@ class Cell extends EventTarget {
   #sudoku: Sudoku;
   get sudoku(): Sudoku { return this.#sudoku; }
 
+  #groups: Set<Group>;
+  get groups(): Set<Group> { return this.#groups; }
+
   #digit: string;
   get digit(): string { return this.#digit; }
   set digit(digit: string) {
-    if (!this.#isClue) {
-      this.#setDigit(digit); // Setting digit not allowed if the cell is a clue
-    }
+    if (this.#isClue) return; // Setting digit not allowed if the cell is a clue
+
+    this.#setDigit(digit);
+    this.#checkErrors();
   }
 
   #isClue: boolean;
@@ -38,14 +44,17 @@ class Cell extends EventTarget {
   }
 
   constructor(sudoku: Sudoku);
-  constructor(sudoku: Sudoku, element: Element);
+  constructor(sudoku: Sudoku, groups: Group[]);
+  constructor(sudoku: Sudoku, groups: Group[], element: Element);
   constructor(
     sudoku: Sudoku,
+    groups?: Group[],
     element?: Element,
   ) {
     super();
 
     this.#sudoku = sudoku;
+    this.#groups = new Set<Group>(groups);
 
     this.#element = element || document.createElement("td");
     this.#element.classList.add("sudoku-cell");
@@ -68,10 +77,26 @@ class Cell extends EventTarget {
     this.error = false;
   }
 
+  addToGroup(group: Group) {
+    this.#groups.add(group);
+  }
+
+  removeFromGroup(group: Group) {
+    this.#groups.delete(group);
+  }
+
   #setDigit(digit: string) {
     this.#digit = digit;
     this.#element.innerHTML = digit || "";
     this.dispatchEvent(new Event("digitChange"));
+  }
+
+  #checkErrors() {
+    const errors = this.#sudoku.rules.checkErrors(this);
+    if (!errors?.length) return;
+
+    const event = new CellEvent("error", [...errors, this]);
+    this.dispatchEvent(event);
   }
 }
 

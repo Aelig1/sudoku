@@ -1,11 +1,10 @@
 import Cell from "./cell";
-import Group from "./group";
 import Sudoku from ".";
 
 interface SudokuRules {
   allowedDigits?: string | string[];
   groups?: number[][];
-  getErrorCells?: (group: Group) => Cell[];
+  checkErrors?: (cell: Cell, digit?: string) => Cell[];
   onError?: (sudoku: Sudoku) => void;
 }
 
@@ -43,27 +42,22 @@ export const defaultRules: SudokuRules = {
     [57, 58, 59, 66, 67, 68, 75, 76, 77],
     [60, 61, 62, 69, 70, 71, 78, 79, 80],
   ],
-  getErrorCells: (group: Group) => {
-    // Get duplicate digits in a group
-    // Group cells by digit
-    const digitCells = new Map<string, Cell[]>();
+  checkErrors: (cell: Cell, digit?: string) => {
+    digit = digit || cell.digit;
+    if (!digit) return undefined; // No need to check empty cell
 
-    for (const cell of group.cells) {
-      const digit = cell.digit;
-      if (!digit) continue; // Empty cell
-
-      let found = digitCells.get(digit);
-      if (!found) {
-        found = []; // Digit not found yet, add to digitCells
-        digitCells.set(digit, found);
+    const errors: Cell[] = [];
+    // Test all groups that the cell is in
+    for (const group of cell.groups) {
+      // Go through all cells in the group
+      for (const other of group.cells) {
+        // Ignore self
+        if (other === cell) continue;
+        // Conflicting cell found
+        if (other.digit === digit) errors.push(other);
       }
-      found.push(cell); // Add cell to digit's array
     }
-
-    return Array
-      .from(digitCells.values())
-      .filter(cells => cells.length > 1)
-      .flat();
+    return errors;
   },
   onError: (sudoku: Sudoku) => {
     sudoku.endGame();
