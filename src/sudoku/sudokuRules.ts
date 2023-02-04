@@ -3,6 +3,7 @@ import Sudoku from ".";
 
 interface SudokuRules {
   allowedDigits?: string | string[];
+  clearKeys?: string[];
   groups?: number[][];
   checkErrors?: (cell: Cell, digit?: string) => Cell[];
   onError?: (sudoku: Sudoku) => void;
@@ -10,6 +11,7 @@ interface SudokuRules {
 
 export const defaultRules: SudokuRules = {
   allowedDigits: "123456789",
+  clearKeys: ["0", "Backspace", "Delete"],
   groups: [
     // Rows
     [0, 1, 2, 3, 4, 5, 6, 7, 8],

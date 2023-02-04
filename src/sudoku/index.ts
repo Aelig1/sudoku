@@ -122,7 +122,7 @@ class Sudoku {
   }
 
   #isClearKey(key: string) {
-    return ["0", "Backspace", "Delete"].includes(key);
+    return this.#rules.clearKeys?.includes(key);
   }
 
   reset() {
