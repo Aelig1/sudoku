@@ -3,9 +3,9 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 module.exports = (env, argv) => {
   const rules = [
     {
-      test: /\.tsx?$/i,
-      use: "ts-loader",
+      test: /\.(t|j)sx?$/i,
       exclude: /node_modules/,
+      use: ["babel-loader"],
     },
     {
       test: /\.(c|s[ac])ss$/i,
@@ -26,7 +26,7 @@ module.exports = (env, argv) => {
     resolve: {
       extensions: [".tsx", ".ts", ".js"],
     },
-    target: "web",
+    target: ["web", "es5"],
     output: {
       filename: "index.js",
     },
