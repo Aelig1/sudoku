@@ -1,4 +1,6 @@
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = (env, argv) => {
   const rules = [
@@ -9,14 +11,16 @@ module.exports = (env, argv) => {
     },
     {
       test: /\.(c|s[ac])ss$/i,
-      use: ["style-loader", "css-loader", "sass-loader"],
+      use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
     },
   ];
 
   const plugins = [
     new HtmlWebpackPlugin({
       template: "./src/index.html",
-      inject: false,
+    }),
+    new MiniCssExtractPlugin({
+      filename: "[name].[contenthash].css",
     }),
   ];
 
@@ -28,7 +32,14 @@ module.exports = (env, argv) => {
     },
     target: ["web", "es5"],
     output: {
-      filename: "index.js",
+      filename: "[name].[contenthash].js",
+      clean: true,
+    },
+    optimization: {
+      minimizer: [
+        "...",
+        new CssMinimizerPlugin(),
+      ],
     },
     plugins,
   };
